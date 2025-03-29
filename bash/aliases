@@ -1,0 +1,9 @@
+alias gotoAlb='cd /mnt/c/Users/Alb/'
+alias gotoProg='cd /mnt/c/Users/Alb/Documents/Progs'
+alias gitreverse='git reset --soft HEAD~1'
+export ALB_PATH="/mnt/c/Users/Alb"
+# # Nginx
+# alias nginxreload="sudo nginx -s reload"
+# alias nginxrestart="sudo nginx -s stop && sudo nginx"
+# alias nginxservers="cd /opt/homebrew/etc/nginx/servers"
+# alias nginxlist="ll /opt/homebrew/etc/nginx/servers"

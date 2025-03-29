@@ -1,7 +1,18 @@
-alias gotoAlb='cd /mnt/c/Users/Alb/'
-alias gotoProg='cd /mnt/c/Users/Alb/Documents/Progs'
-alias gitreverse='git reset --soft HEAD~1'
-export ALB_PATH="/mnt/c/Users/Alb"
+
+# If WSL : 
+if grep -qi microsoft /proc/version; then
+  drive=$(for d in c d e; do [ -d "/mnt/${d}/Users/${USER}" ] && echo "$d" && break; done)
+  if [ -n "$drive" ]; then
+    export ${USER^^}_PATH="/mnt/${drive}/Users/${USER}"
+    alias cd${USER^}="cd /mnt/${drive}/Users/${USER}"
+    #eval "cd \$${USER^^}_PATH"
+  fi
+
+  alias shutdown_WSL="wsl.exe --shutdown"
+fi
+
+
+
 # # Nginx
 # alias nginxreload="sudo nginx -s reload"
 # alias nginxrestart="sudo nginx -s stop && sudo nginx"

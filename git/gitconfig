@@ -1,5 +1,7 @@
 # This is Git's per-user configuration file.
 [user]
-# Please adapt and uncomment the following lines:
-	name = Albroy 
-	email = 94757950+Albroy@users.noreply.github.com
+    name = Albroy
+    email = 94757950+Albroy@users.noreply.github.com
+
+[alias]
+    undo = reset --soft HEAD~1

@@ -5,3 +5,6 @@
 
 [alias]
     undo = reset --soft HEAD~1
+
+[include]
+    path = ~/.gitconfig_local

@@ -1,1 +1,13 @@
 set number rnu
+
+
+syntax on
+colorscheme desert
+
+
+
+
+let $LOCALFILE=expand("~/.vimrc_local")
+if filereadable($LOCALFILE)
+    source $LOCALFILE
+endif

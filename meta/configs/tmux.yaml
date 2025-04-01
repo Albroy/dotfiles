@@ -1,7 +1,7 @@
 
 - link:
-    ~/.tmux:  tmux
+    ~/.tmux: tmux
     ~/.tmux.conf: tmux/tmux.conf
 - shell:
-    - [ "sudo apt update && sudo apt install -y tmux" ]
+    - [ apt install -y tmux, Install TMUX... ]
 

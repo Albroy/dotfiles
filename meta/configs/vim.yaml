@@ -2,5 +2,5 @@
 - link:
     ~/.vimrc: editors/vim/vimrc
 - shell:
-    - [ "sudo apt update && sudo apt install -y vim" ]
+    - [ apt install -y vim, Install VIM... ]
 

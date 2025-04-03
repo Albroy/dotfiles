@@ -1,0 +1,47 @@
+#!/bin/bash
+#TODO
+function x_oslmd5 {
+  openssl rsa -modulus -noout | md5sum;
+}
+
+
+x_pullRepo() {
+  excluded=("vendor" "node_modules" "dist" "build" "tmp" ".local/share")
+
+  initial_dir=$(pwd)
+
+  if [ -z "$1" ]; then
+    echo "Usage: x_pullRepo <repo_name>"
+    return 1
+  fi
+
+  find_command="find ~ -type d -name '.git'"
+
+  for term in "${excluded[@]}"; do
+    find_command="$find_command ! -path \"*/$term/*\""
+  done
+
+  repo_dir=$(eval $find_command | fzf --preview 'echo {}' \
+    --preview-window=up:30%:wrap \
+    --query "$1" \
+    --border)
+
+  if [ -z "$repo_dir" ]; then
+    echo "No repo selected."
+    return 1
+  fi
+
+  repo_path=$(dirname "$repo_dir")
+
+  if [ ! -d "$repo_path/.git" ]; then
+    echo "Not valid."
+    return 1
+  fi
+
+  echo "Pulling the latest changes in $repo_path..."
+  cd "$repo_path" || return 1
+  git pull
+
+  cd "$initial_dir" || return 1
+}
+

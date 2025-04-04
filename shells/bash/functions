@@ -10,18 +10,21 @@ x_pullRepo() {
 
   initial_dir=$(pwd)
 
-  if [ -z "$1" ]; then
-    echo "Usage: x_pullRepo <repo_name>"
-    return 1
-  fi
-
   find_command="find ~ -type d -name '.git'"
 
   for term in "${excluded[@]}"; do
     find_command="$find_command ! -path \"*/$term/*\""
   done
 
-  repo_dir=$(eval $find_command | fzf --preview 'echo {}' \
+  if command -v batcat &>/dev/null; then
+    preview_cmd="batcat --style=numbers --color=always 2>/dev/null"
+  elif command -v bat &>/dev/null; then
+    preview_cmd="bat --style=numbers --color=always 2>/dev/null"
+  else
+    preview_cmd="cat 2>/dev/null"
+  fi  
+
+  repo_dir=$(eval $find_command | fzf --preview "$preview_cmd {}/../README.md" \
     --preview-window=up:30%:wrap \
     --query "$1" \
     --border)

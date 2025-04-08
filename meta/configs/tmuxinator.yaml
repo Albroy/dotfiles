@@ -1,0 +1,6 @@
+- link:
+    ~/.tmuxinator: tmuxinator
+- shell:
+  - 'mkdir -p ~/.local/bin'
+  - [ apt install -y tmuxinator, Install TMUXINATOR... ]
+

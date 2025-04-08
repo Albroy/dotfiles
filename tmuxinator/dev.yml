@@ -1,0 +1,10 @@
+name: <%= @args[0] %>
+root: <%= ENV["WORKSPACE"] %><%= @args[0] %>
+# root: ~/workspace/<%= @args[0] %>
+
+windows:
+  - NeoVim: 
+    - cd <%= ENV["WORKSPACE"] %><%= @args[0] %>
+    - nvim
+  - shell: 
+    - git pull

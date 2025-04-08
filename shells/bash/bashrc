@@ -84,16 +84,20 @@ if ! shopt -oq posix; then
   fi
 fi
 PATH=$PATH:$HOME/.local/bin
+
+export WORKSPACE="/home/${USER}/workspace/"
 export DOTFILES_BASH_DIR="$(dirname "$(realpath "$HOME/.bashrc")")"
-source "$DOTFILES_BASH_DIR/aliases"
-source "$DOTFILES_BASH_DIR/functions"
 
 if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
 fi
 
+source "$DOTFILES_BASH_DIR/aliases"
+source "$DOTFILES_BASH_DIR/functions"
+
+
 if command -v batcat &>/dev/null; then
   export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | batcat -p -lman'"
 fi
 
-export PATH=~/.dotfiles/bin:${PATH}
+#export PATH=~/.dotfiles/bin:${PATH}

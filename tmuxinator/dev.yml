@@ -7,4 +7,5 @@ windows:
     - cd <%= ENV["WORKSPACE"] %><%= @args[0] %>
     - nvim
   - shell: 
+    - cd <%= ENV["WORKSPACE"] %><%= @args[0] %>
     - git pull

@@ -24,10 +24,10 @@ fi
 # ========== TMUXINATOR ==========
 if command -v tmuxinator  &>/dev/null ; then
   for repo in $(ls -1 $WORKSPACE); do
-    alias "$repo"="tmuxinator dev $repo"
+    alias ${repo}="tmuxinator dev $repo"
   done
 fi
-
+unset repo
 # ========== WSL ==========
 if grep -qi microsoft /proc/version; then
   drive=$(for d in c d e; do [ -d "/mnt/${d}/Users/${USER}" ] && echo "$d" && break; done)

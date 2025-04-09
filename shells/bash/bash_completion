@@ -1,3 +1,4 @@
 for bcfile in $DOTFILES_BASH_DIR/bash_completion.d/* ; do
    [ -f "$bcfile" ] && . $bcfile
 done
+unset bcfile

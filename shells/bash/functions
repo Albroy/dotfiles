@@ -47,4 +47,46 @@ x_pullRepo() {
 
   cd "$initial_dir" || return 1
 }
+diff_tar () {
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 archive1.tar.gz archive2.tar.gz"
+    exit 1
+  fi
+
+  ARCHIVE1="$1"
+  ARCHIVE2="$2"
+  common=$(printf "%s\n%s\n" "$ARCHIVE1" "$ARCHIVE2" | awk 'NR==1 {line=$0} NR==2 {for(i=1;i<=length && substr($0, i, 1)==substr(line, i, 1); i++); print substr($0, 1, i-1)}')
+
+  strip_top_folder_if_needed() {
+    local dir="$1"
+    local entries=("$dir"/*)
+
+    if [ ${#entries[@]} -eq 1 ] && [ -d "${entries[0]}" ]; then
+      local subdir="${entries[0]}"
+      mv "$subdir"/* "$dir" 2>/dev/null
+      rmdir "$subdir"
+    fi
+  }
+
+  DIR1=$(mktemp -d /tmp/targz1_XXXX)
+  DIR2=$(mktemp -d /tmp/targz2_XXXX)
+
+
+  tar -xzf "$ARCHIVE1" -C "$DIR1"
+  tar -xzf "$ARCHIVE2" -C "$DIR2"
+
+  strip_top_folder_if_needed "$DIR1"
+  strip_top_folder_if_needed "$DIR2"
+
+  echo "  $DIR1"
+  echo "  $DIR2"
+
+
+  DIFF_FILE="diff-$common.diff"
+
+  diff -Naur --no-dereference --exclude=".git" "$DIR1" "$DIR2" > "$DIFF_FILE"
+  MODIFIED_FILES=$(grep -E '(^\+\+|^\-\-)' "$DIFF_FILE" | cut -d' ' -f2 | sed 's|.*/||' | awk 'NF' | awk '{print $1}'| sort | uniq -c)
+  echo -e "=> Diff $DIFF_FILE,\n${MODIFIED_FILES}"
+  dc <<<"1 102*P105P108P101P115P4 8*P100 2+P111P117P110P100P59 1-P32P $(echo -e "${MODIFIED_FILES}" | wc -l) p"
+}
 

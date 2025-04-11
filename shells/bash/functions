@@ -5,7 +5,7 @@ function x_oslmd5 {
 }
 
 
-x_pullRepo() {
+pullgitrep() {
   excluded=("vendor" "node_modules" "dist" "build" "tmp" ".local/share")
 
   initial_dir=$(pwd)
@@ -47,14 +47,15 @@ x_pullRepo() {
 
   cd "$initial_dir" || return 1
 }
+
 diff_tar () {
   if [ "$#" -ne 2 ]; then
     echo "Usage: $0 archive1.tar.gz archive2.tar.gz"
     exit 1
   fi
 
-  ARCHIVE1="$1"
-  ARCHIVE2="$2"
+  local ARCHIVE1="$1"
+  local ARCHIVE2="$2"
   common=$(printf "%s\n%s\n" "$ARCHIVE1" "$ARCHIVE2" | awk 'NR==1 {line=$0} NR==2 {for(i=1;i<=length && substr($0, i, 1)==substr(line, i, 1); i++); print substr($0, 1, i-1)}')
 
   strip_top_folder_if_needed() {
@@ -90,3 +91,4 @@ diff_tar () {
   dc <<<"1 102*P105P108P101P115P4 8*P100 2+P111P117P110P100P59 1-P32P $(echo -e "${MODIFIED_FILES}" | wc -l) p"
 }
 
+dush() { local t="${1:-.}"; [ -f "$t" ] && du -sh "$t" 2>/dev/null || du -sh "$t"/.[^.]* "$t"/* 2>/dev/null | sort -hr; }

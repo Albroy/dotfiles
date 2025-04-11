@@ -56,7 +56,11 @@ diff_tar () {
 
   local ARCHIVE1="$1"
   local ARCHIVE2="$2"
-  common=$(printf "%s\n%s\n" "$ARCHIVE1" "$ARCHIVE2" | awk 'NR==1 {line=$0} NR==2 {for(i=1;i<=length && substr($0, i, 1)==substr(line, i, 1); i++); print substr($0, 1, i-1)}')
+  local bn1="${ARCHIVE1##*/}"
+  bn1="${bn1%.*}"
+  local bn2="${ARCHIVE2##*/}"
+  bn2="${bn2%.*}"
+  local common=$(printf "%s\n%s\n" "$bn1" "$bn2" | awk 'NR==1 {line=$0} NR==2 {for(i=1;i<=length && substr($0, i, 1)==substr(line, i, 1); i++); print substr($0, 1, i-1)}')
 
   strip_top_folder_if_needed() {
     local dir="$1"
@@ -69,8 +73,8 @@ diff_tar () {
     fi
   }
 
-  DIR1=$(mktemp -d /tmp/targz1_XXXX)
-  DIR2=$(mktemp -d /tmp/targz2_XXXX)
+  DIR1=$(mktemp -d "/tmp/${bn1}_XXXX")
+  DIR2=$(mktemp -d "/tmp/${bn2}_XXXX")
 
 
   tar -xzf "$ARCHIVE1" -C "$DIR1"
@@ -79,11 +83,7 @@ diff_tar () {
   strip_top_folder_if_needed "$DIR1"
   strip_top_folder_if_needed "$DIR2"
 
-  echo "  $DIR1"
-  echo "  $DIR2"
-
-
-  DIFF_FILE="diff-$common.diff"
+  DIFF_FILE=".${bn1}-${bn2}_${EPOCHSECONDS}.diff"
 
   diff -Naur --no-dereference --exclude=".git" "$DIR1" "$DIR2" > "$DIFF_FILE"
   MODIFIED_FILES=$(grep -E '(^\+\+|^\-\-)' "$DIFF_FILE" | cut -d' ' -f2 | sed 's|.*/||' | awk 'NF' | awk '{print $1}'| sort | uniq -c)

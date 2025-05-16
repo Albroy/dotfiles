@@ -92,3 +92,90 @@ diff_tar () {
 }
 
 dush() { local t="${1:-.}"; [ -f "$t" ] && du -sh "$t" 2>/dev/null || du -sh "$t"/.[^.]* "$t"/* 2>/dev/null | sort -hr; }
+
+ip_to_int() {
+    local ip="$1"
+    local a b c d
+    IFS=. read -r a b c d <<<"$ip"
+    echo "$((a * 256 ** 3 + b * 256 ** 2 + c * 256 + d))"
+}
+
+int_to_ip() {
+    local int="$1"
+    local octet1=$((int >> 24 & 255))
+    local octet2=$((int >> 16 & 255))
+    local octet3=$((int >> 8 & 255))
+    local octet4=$((int & 255))
+    echo "$octet1.$octet2.$octet3.$octet4"
+}
+
+#groups=("192.168.1.0" "192.168.1.1" "192.168.1.2")
+#calculate_cidr "${groups[@]}"
+calculate_cidr() {
+    local group=("$@") 
+    local start_ip=${group[0]}  
+    local end_ip=${group[-1]}  
+    local start_int=$(ip_to_int "$start_ip")
+    local end_int=$(ip_to_int "$end_ip") 
+    local cidrs=() 
+    local diff=$((end_int - start_int + 1)) 
+    
+    while (( start_int <= end_int )); do
+        local remaining=$((end_int - start_int + 1))
+        local size=1
+        local exp=0
+        while (( size << 1 <= remaining )); do
+            ((exp++))
+            size=$((1 << exp))
+        done
+        while (( (start_int % size) != 0 )); do
+            ((exp--))
+            size=$((1 << exp))
+        done
+
+        local cidr=$((32 - exp))
+        cidrs+=("$(int_to_ip "$start_int")/$cidr")
+
+        start_int=$((start_int + size))
+    done  
+    echo "${cidrs[@]}"
+}
+
+trace_bashrc() {
+  temp_file=$(mktemp)
+
+  PS4='+ $(date "+%s.%N")\011' bash -x ~/.bashrc > "$temp_file" 2>&1
+  prev_time=0
+
+  while IFS= read -r line; do    
+    if [[ "$line" =~ ^(\++)[[:space:]]+([0-9]+)\.([0-9]+) ]]; then
+      plus_signs="${BASH_REMATCH[1]}"
+      current_time="${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+      cleaned_line="${line/${BASH_REMATCH[0]}/$plus_signs }"
+
+      if [ "$prev_time" != "0" ]; then
+        diff=$(echo "$current_time - $prev_time" | bc)    
+        [[ "$diff" =~ ^\. ]] && diff="0$diff"
+        echo "$diff | $cleaned_line"
+      else
+        echo "0.000000000 | $cleaned_line"
+      fi
+      prev_time="$current_time"
+    else
+      echo "$line"
+    fi
+  done < "$temp_file"
+  rm "$temp_file"  
+}
+
+trace_bashrc_fast() {
+  (
+    export LC_NUMERIC=C
+    LAST=$EPOCHREALTIME
+    PS4='+[$(printf "%.3f s" "$(echo "$EPOCHREALTIME - $LAST" | bc)")] '
+    set -x
+    source ~/.bashrc
+    set +x
+  ) & 
+  wait
+}

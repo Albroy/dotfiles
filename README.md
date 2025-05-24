@@ -21,7 +21,7 @@ For installing a predefined profile:
 For installing single configurations:
 
 ```bash
-~/.dotfiles$ ./install-standalone <configs...>?-sudo 
+~/.dotfiles$ ./install-standalone <configs...>
 ```
 
 If a configuration requires elevated privileges, add -sudo to its name:

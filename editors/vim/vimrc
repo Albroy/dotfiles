@@ -1,9 +1,14 @@
 set number rnu
+set numberwidth=1
+set background=light
+set mouse=a
+
+highlight LineNr        ctermfg=DarkGrey
 
 
-syntax on
-
-
+if &t_Co > 1
+    syntax enable
+endif
 
 
 let $LOCALFILE=expand("~/.vimrc_local")

@@ -3,12 +3,22 @@ set numberwidth=1
 set background=light
 set mouse=a
 
-highlight LineNr        ctermfg=DarkGrey
+highlight LineNr ctermfg=DarkGrey
 
+"set cursorline
+"highlight CursorLineNr ctermfg=Yellow
+call plug#begin('~/.vim/plugged')
 
-if &t_Co > 1
-    syntax enable
-endif
+Plug 'morhetz/gruvbox'
+
+call plug#end()
+set termguicolors
+set background=dark
+colorscheme gruvbox
+
+"if &t_Co > 1
+"    syntax enable
+"endif
 
 
 let $LOCALFILE=expand("~/.vimrc_local")

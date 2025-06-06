@@ -1,1 +1,2 @@
-
+editors/vim/autoload/*
+editors/vim/plugged/*

@@ -1,2 +1,3 @@
 editors/vim/autoload/*
 editors/vim/plugged/*
+editors/nvim/lazy-lock.json

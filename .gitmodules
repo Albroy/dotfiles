@@ -10,3 +10,6 @@
 [submodule "meta/dotbot"]
 	path = meta/dotbot
 	url = https://github.com/anishathalye/dotbot
+[submodule "dotbot-plugins/omnipkg"]
+	path = dotbot-plugins/omnipkg
+	url = https://github.com/code-maniac/dotbot-omnipkg

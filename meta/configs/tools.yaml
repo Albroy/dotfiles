@@ -1,0 +1,17 @@
+- shell:
+    - 
+      description: Enable COPR for lazygit on Fedora
+      command: |
+        if command -v dnf &> /dev/null; then
+          if ! dnf repolist | grep -q "dejan/lazygit"; then
+            sudo dnf -y copr enable dejan/lazygit
+          fi
+        fi
+
+- omnipkg:
+    - install:
+        - btop
+        - lazygit
+        - fzf
+        - ripgrep   
+        - k9s

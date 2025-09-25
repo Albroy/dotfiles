@@ -33,7 +33,7 @@ DOTBOT_DIR="dotbot"
 DOTBOT_BIN="bin/dotbot"
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
+OMNIPKG_PLUGIN="${BASE_DIR}/dotbot-plugins/omnipkg/omnipkg.py"
 
 cd "${BASE_DIR}"
 git submodule update --init --recursive
@@ -96,8 +96,10 @@ for config in ${@}; do
     suffix="-sudo"
     echo -e "$(<"${BASE_DIR}/${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}")\n$(<"${BASE_DIR}/${META_DIR}/${CONFIG_DIR}/${config%"$suffix"}${CONFIG_SUFFIX}")" > "$configFile"
 
-    cmd=("${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" -c "$configFile")
-
+    cmd=("${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" \
+        -d "${BASE_DIR}" \
+        -c "$configFile" \
+        -p "${OMNIPKG_PLUGIN}")
     # print a line depending on the terminal width
     # get terminal width: https://unix.stackexchange.com/a/425158
     # print a line of   : https://stackoverflow.com/a/17030976/3053548

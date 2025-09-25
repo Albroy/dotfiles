@@ -1,6 +1,5 @@
 
 - link:
     ~/.vimrc: editors/vim/vimrc
-- shell:
-    - [ apt install -y vim, Install VIM... ]
-
+- omnipkg:
+    - install: [vim]

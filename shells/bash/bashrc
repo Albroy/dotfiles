@@ -95,9 +95,14 @@ fi
 source "$DOTFILES_BASH_DIR/aliases"
 source "$DOTFILES_BASH_DIR/functions"
 
-
 if command -v batcat &>/dev/null; then
-  export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | batcat -p -lman'"
+    BAT_CMD="batcat"
+elif command -v bat &>/dev/null; then
+    BAT_CMD="bat"
+fi
+
+if [ -n "$BAT_CMD" ]; then
+    export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | $BAT_CMD -p -lman'"
 fi
 
 #export PATH=~/.dotfiles/bin:${PATH}

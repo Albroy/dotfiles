@@ -2,6 +2,5 @@
 - link:
     ~/.tmux: tmux
     ~/.tmux.conf: tmux/tmux.conf
-- shell:
-    - [ apt install -y tmux, Install TMUX... ]
-
+- omnipkg:
+    - install: [tmux]

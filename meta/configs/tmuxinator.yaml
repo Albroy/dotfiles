@@ -1,6 +1,16 @@
 - link:
     ~/.tmuxinator: tmuxinator
+
 - shell:
-  - 'mkdir -p ~/.local/bin'
+    - command: mkdir -p ~/.local/bin
+      description: Create local bin directory
+    - command: |
+        if command -v dnf &> /dev/null; then
+          if ! dnf repolist | grep -q "fcsm/tmuxinator"; then
+            sudo dnf -y copr enable fcsm/tmuxinator
+          fi
+        fi
+      description: Enable COPR for tmuxinator on Fedora
+
 - omnipkg:
     - install: [tmuxinator]

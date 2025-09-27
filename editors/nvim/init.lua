@@ -15,5 +15,17 @@ if not pcall(require, "lazy") then
   vim.cmd.quit()
 end
 
+local bash_dir = os.getenv("DOTFILES_BASH_DIR")
+
+if bash_dir then
+  vim.filetype.add({
+    pattern = {
+      [bash_dir .. "/.*"] = "sh",
+    },
+  })
+else
+  print("Warning: DOTFILES_BASH_DIR is not set")
+end
+
 require "lazy_setup"
 require "polish"

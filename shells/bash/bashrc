@@ -94,6 +94,7 @@ fi
 
 source "$DOTFILES_BASH_DIR/aliases"
 source "$DOTFILES_BASH_DIR/functions"
+source "$DOTFILES_BASH_DIR/ssh-agent"
 
 if command -v batcat &>/dev/null; then
     BAT_CMD="batcat"

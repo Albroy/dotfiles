@@ -1,0 +1,68 @@
+function sshagent_findsockets {
+    find /tmp -uid $(id -u) -type s -name agent.\* 2>/dev/null
+}
+
+
+function sshagent_testsocket {
+   if ! command -v ssh-add >/dev/null 2>&1; then
+        echo "ssh-add is not available; agent testing aborted"
+        return 1
+    fi
+
+    local sock="${1:-$SSH_AUTH_SOCK}"
+
+    if [ -z "$sock" ] ; then
+        return 2
+    fi
+
+    if [ -S "$sock" ] ; then
+        SSH_AUTH_SOCK="$sock" ssh-add -l > /dev/null
+        if [ $? = 2 ] ; then
+            echo "Socket $sock is dead!  Deleting!"
+            rm -f "$sock"
+            return 4
+        else
+            #echo "Found ssh-agent $sock"
+            return 0
+        fi
+    else
+        echo "$sock is not a socket!"
+        return 3
+    fi
+}
+
+function sshagent_init {
+    # ssh agent sockets can be attached to a ssh daemon process or an
+    # ssh-agent process.
+    AGENTFOUND=0
+    # Attempt to find and use the ssh-agent in the current environment
+    if sshagent_testsocket ; then AGENTFOUND=1 ; fi
+
+    # Find first private key in ~/.ssh that is not a known public key or config file
+    PRIVATE_KEY=$(find ~/.ssh -type f -name 'id_*' ! -name '*.pub' ! -name 'config' | head -n 1)
+    # If there is no agent in the environment, search /tmp for
+    # possible agents to reuse before starting a fresh ssh-agent process.
+
+    if [ $AGENTFOUND = 0 ] ; then
+        for agentsocket in $(sshagent_findsockets) ; do
+            if sshagent_testsocket "$agentsocket" ; then
+                export SSH_AUTH_SOCK="$agentsocket"
+                AGENTFOUND=1
+                break
+            fi
+        done
+    fi    # If at this point we still haven't located an agent, it's time to
+    # start a new one
+    if [ $AGENTFOUND = 0 ] && [ -n "$PRIVATE_KEY" ]; then
+        eval $(ssh-agent) > /dev/null
+        ssh-add -t 14400 "$PRIVATE_KEY"      
+        export SSH_AUTH_SOCK
+    fi
+
+    unset AGENTFOUND
+    unset agentsocket
+}
+
+if [ -t 0 ]; then
+    sshagent_init
+fi

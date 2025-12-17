@@ -35,8 +35,11 @@ function sshagent_init {
     # ssh agent sockets can be attached to a ssh daemon process or an
     # ssh-agent process.
     AGENTFOUND=0
-    # Attempt to find and use the ssh-agent in the current environment
-    if sshagent_testsocket ; then AGENTFOUND=1 ; fi
+    
+    # Check if we already have a working agent to avoid prompting
+    if [ -n "$SSH_AUTH_SOCK" ] && sshagent_testsocket ; then 
+        AGENTFOUND=1 
+    fi
 
     # Find first private key in ~/.ssh that is not a known public key or config file
     PRIVATE_KEY=$(find ~/.ssh -type f -name 'id_*' ! -name '*.pub' ! -name 'config' | head -n 1)
@@ -51,10 +54,13 @@ function sshagent_init {
                 break
             fi
         done
-    fi    # If at this point we still haven't located an agent, it's time to
-    # start a new one
+    fi
+    
+    # If at this point we still haven't located an agent, it's time to
+    # start a new one - but only ask for key if we're starting fresh
     if [ $AGENTFOUND = 0 ] && [ -n "$PRIVATE_KEY" ]; then
         eval $(ssh-agent) > /dev/null
+        echo "Starting new SSH agent and adding key $PRIVATE_KEY"
         ssh-add -t 14400 "$PRIVATE_KEY"      
         export SSH_AUTH_SOCK
     fi

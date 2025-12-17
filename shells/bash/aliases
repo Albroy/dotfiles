@@ -1,7 +1,7 @@
 # enable aliases to be sudo’ed
 alias sudo='sudo '
 
-alias reload='source ~/.bashrc && cd -'
+alias reload='(current_dir=$(pwd); source ~/.bashrc; cd "$current_dir")'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -40,12 +40,23 @@ fi
 unset repo
 # ========== WSL ==========
 if grep -qi microsoft /proc/version; then
-  drive=$(for d in c d e; do [ -d "/mnt/${d}/Users/${USER}" ] && echo "$d" && break; done)
-  if [ -n "$drive" ]; then
-    export ${USER^^}_PATH="/mnt/${drive}/Users/${USER}"
-    alias cd${USER^}="cd /mnt/${drive}/Users/${USER}"
-    #eval "cd \$${USER^^}_PATH"
-  fi
+  # Try to find Windows user directory that matches current user
+  for drive in c d e; do 
+    if [ -d "/mnt/${drive}/Users/${USER}" ]; then
+      # Direct match - Linux username = Windows username
+      export ${USER^^}_PATH="/mnt/${drive}/Users/${USER}"
+      alias cd${USER^}="cd /mnt/${drive}/Users/${USER}"
+      break
+    elif [ -d "/mnt/${drive}/Users" ]; then
+      # Look for closest match by first letter
+      windows_user=$(ls -1 "/mnt/${drive}/Users" | grep -i "^${USER}" | head -1)
+      if [ -n "$windows_user" ] && [ -d "/mnt/${drive}/Users/$windows_user" ]; then
+        export ${USER^^}_PATH="/mnt/${drive}/Users/$windows_user"
+        alias cd${USER^}="cd /mnt/${drive}/Users/$windows_user"
+        break
+      fi
+    fi
+  done
 
   alias shutdown_WSL="wsl.exe --shutdown"
 fi

@@ -52,11 +52,20 @@ return {
             return default_header
           end
 
-          local output = vim.fn.systemlist({
-            "figlet",
-            "-f", "bigmono9",
-            name,
-          })
+          -- Try bigmono9 first, fallback to slant
+          local function try_figlet(font)
+            return vim.fn.systemlist({
+              "figlet",
+              "-f", font,
+              name,
+            })
+          end
+          
+          local output = try_figlet("bigmono9")
+          
+          if vim.v.shell_error ~= 0 or not output or vim.tbl_isempty(output) then
+            output = try_figlet("slant")
+          end
 
           if vim.v.shell_error ~= 0 or not output or vim.tbl_isempty(output) then
             return default_header

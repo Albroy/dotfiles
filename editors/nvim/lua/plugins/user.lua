@@ -1,4 +1,4 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+-- if true then return {} end-- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 -- You can also add or configure plugins by creating files in this `plugins/` folder
 -- PLEASE REMOVE THE EXAMPLES YOU HAVE NO INTEREST IN BEFORE ENABLING THIS FILE
@@ -19,12 +19,21 @@ return {
   -- == Examples of Overriding Plugins ==
 
   -- customize dashboard options
-  {
-    "folke/snacks.nvim",
-    opts = {
-      dashboard = {
-        preset = {
-          header = table.concat({
+
+{
+  "folke/snacks.nvim",
+  opts = {
+    dashboard = {
+      preset = {
+        header = (function()
+          local cwd = vim.fn.getcwd()
+          local home = vim.fn.expand("~")
+
+          local name = (cwd == home)
+            and "~"
+            or vim.fn.fnamemodify(cwd, ":t")
+
+          local default_header = table.concat({
             " █████  ███████ ████████ ██████   ██████ ",
             "██   ██ ██         ██    ██   ██ ██    ██",
             "███████ ███████    ██    ██████  ██    ██",
@@ -36,11 +45,29 @@ return {
             "██ ██  ██ ██    ██ ██ ██ ████ ██",
             "██  ██ ██  ██  ██  ██ ██  ██  ██",
             "██   ████   ████   ██ ██      ██",
-          }, "\n"),
-        },
+ 
+          }, "\n")
+
+          if vim.fn.executable("figlet") ~= 1 then
+            return default_header
+          end
+
+          local output = vim.fn.systemlist({
+            "figlet",
+            "-f", "bigmono9",
+            name,
+          })
+
+          if vim.v.shell_error ~= 0 or not output or vim.tbl_isempty(output) then
+            return default_header
+          end
+
+          return table.concat(output, "\n")
+        end)(),
       },
     },
   },
+},
 
   -- You can disable default plugins as follows:
   { "max397574/better-escape.nvim", enabled = false },
@@ -84,5 +111,34 @@ return {
         Rule("a", "a", "-vim")
       )
     end,
+  }, -- fzf-lua configuration
+  {
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function() require("fzf-lua").setup {} end,
   },
+
+  {
+    "AstroNvim/astrocore",
+    ---@type AstroCoreOpts
+    opts = function(_, opts)
+      local maps = opts.mappings or {n = {}}
+      
+      local has_fzf, fzf = pcall(require, "fzf-lua")
+      
+      if has_fzf then
+        -- Override Snacks mappings with fzf-lua
+        maps.n["<leader>fw"] = { function() fzf.live_grep() end, desc = "Find words (fzf-lua)" }
+        maps.n["<leader>ff"] = { function() fzf.files() end, desc = "Find files (fzf-lua)" }
+        maps.n["<leader>fb"] = { function() fzf.buffers() end, desc = "Find buffers (fzf-lua)" }
+        maps.n["<leader>fo"] = { function() fzf.oldfiles() end, desc = "Find old files (fzf-lua)" }
+        maps.n["<leader>fc"] = { function() fzf.grep_cword() end, desc = "Find word under cursor (fzf-lua)" }
+        --maps.n["<leader>fl"] = { function() fzf.lines() end, desc = "Find lines (fzf-lua)" }
+      end
+      
+      
+      return opts
+    end,
+  },
+
 }

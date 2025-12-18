@@ -142,8 +142,95 @@ return {
         maps.n["<leader>fb"] = { function() fzf.buffers() end, desc = "Find buffers (fzf-lua)" }
         maps.n["<leader>fo"] = { function() fzf.oldfiles() end, desc = "Find old files (fzf-lua)" }
         maps.n["<leader>fc"] = { function() fzf.grep_cword() end, desc = "Find word under cursor (fzf-lua)" }
-        --maps.n["<leader>fl"] = { function() fzf.lines() end, desc = "Find lines (fzf-lua)" }
+        maps.n["<leader>fl"] = { function() fzf.lines() end, desc = "Find lines (fzf-lua)" }
       end
+      
+      -- Mapping to extract IPv4 addresses from current file
+      maps.n["<leader>ip"] = {
+        function()
+          local content = vim.fn.getline(0, '$')
+          local ips = {}
+          
+          -- IPv4 regex pattern
+          local ip_pattern = '(%d%d?%d?%.%d%d?%d?%.%d%d?%d?%.%d%d?%d?)'
+          
+          for line in ipairs(content) do
+            for ip in string.gmatch(content[line], ip_pattern) do
+              table.insert(ips, ip)
+            end
+          end
+          
+          if #ips > 0 then
+            local seen = {}
+            local unique_ips = {}
+            for _, ip in ipairs(ips) do
+              if not seen[ip] then
+                seen[ip] = true
+                table.insert(unique_ips, ip)
+              end
+            end
+            
+            local ip_text = table.concat(unique_ips, '\n')
+            vim.fn.setreg('ip', ip_text)  -- Store in register 'ip'
+            vim.cmd('let @0 = "' .. ip_text:gsub('\n', '\\n') .. '"')
+            vim.cmd('let @" = "' .. ip_text:gsub('\n', '\\n') .. '"')
+            print(string.format("Found %d unique IPv4 addresses (stored in register 'ip', use p to paste)", #unique_ips))
+          else
+            print("No IPv4 addresses found")
+          end
+        end,
+        desc = "Extract IPv4 addresses from current file"
+      }
+      
+      -- Mapping to convert IPs from register to /32 CIDR
+      maps.n["<leader>i3"] = {
+        function()
+          -- Read from register 'ip' (output from <leader>ip)
+          local ip_text = vim.fn.getreg('ip')
+          if ip_text == '' then
+            print("Register 'ip' is empty. Use <leader>ip first to extract IPs.")
+            return
+          end
+          
+          local content = vim.fn.getline(0, '$')
+          local existing_cidr_ips = {}
+          local cidr_pattern = '(%d%d?%d?%.%d%d?%d?%.%d%d?%d?%.%d%d?%d?)/%d+'
+          
+          for line in ipairs(content) do
+            for ip in string.gmatch(content[line], cidr_pattern) do
+              existing_cidr_ips[ip] = true
+            end
+          end
+          
+          local ips = {}
+          for ip in ip_text:gmatch('(%d%d?%d?%.%d%d?%d?%.%d%d?%d?%.%d%d?%d?)') do
+            if not existing_cidr_ips[ip] then
+              table.insert(ips, ip)
+            end
+          end
+          print("Debug: Found " .. #ips .. " IPs after filtering")
+          
+          if #ips > 0 then
+            local seen = {}
+            local unique_ips = {}
+            for _, ip in ipairs(ips) do
+              if not seen[ip] then
+                seen[ip] = true
+                table.insert(unique_ips, ip)
+              end
+            end
+            
+            -- Convert to /32 CIDR and insert directly in current file
+            local cidr_text = table.concat(unique_ips, '\n'):gsub('(%d+%.%d+%.%d+%.%d+)', '%1/32')
+            vim.fn.setreg('ip_cidr', cidr_text)  -- Also store for reference
+            vim.api.nvim_put(vim.split(cidr_text, '\n'), 'l', true, true)
+            print(string.format("Inserted %d new IPs as /32 CIDR", #unique_ips))
+          else
+            print("No new IPs to convert (all already exist as CIDR)")
+          end
+        end,
+        desc = "Convert IPs from register 'ip' to /32 CIDR (only new ones not in file)"
+      }
       
       
       return opts

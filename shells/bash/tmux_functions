@@ -1,0 +1,81 @@
+ssh_tmux() {
+  if ! command -v tmux >/dev/null 2>&1; then
+    echo "Error: tmux is required but not installed"
+    return 1
+  fi
+  
+  if ! command -v ssh >/dev/null 2>&1; then
+    echo "Error: ssh is required but not installed"
+    return 1
+  fi
+
+  local pattern="$1"
+  local session_name="$2"
+  
+  if [ -z "$pattern" ]; then
+    echo "Usage: ssh_tmux <pattern> [session_name]"
+    echo "Example: ssh_tmux 'gdest-prod' 'gdest-session'"
+    return 1
+  fi
+  
+  local all_hosts
+  all_hosts=$(list_ssh_hosts)
+  
+  local matched_hosts=$(echo "$all_hosts" | grep -E -- "$pattern" | sort -u)
+  
+  if [ -z "$matched_hosts" ]; then
+    local lan_pattern="${pattern}.lan"
+    matched_hosts=$(echo "$all_hosts" | grep -E -- "$lan_pattern" | sort -u)
+    
+    if [ -z "$matched_hosts" ]; then
+      echo "No host found for pattern: $pattern"
+      return 1
+    else
+      echo "Pattern '$pattern' not found, using '$lan_pattern'"
+    fi
+  fi
+  
+  if [ -z "$session_name" ]; then
+    session_name=$(echo "$pattern" | sed 's/[^a-zA-Z0-9]//g' | head -c 20)
+    if [ -z "$session_name" ]; then
+      session_name="ssh-session"
+    fi
+  fi
+  
+  local host_count=$(echo "$matched_hosts" | wc -l)
+  
+  echo "Creating tmux session '$session_name' with $host_count hosts:"
+  echo "$matched_hosts" | sed 's/^/  - /'
+  
+  local hosts_list
+  hosts_list=$(echo "$matched_hosts" | tr '\n' ' ')
+  
+  tmux new-session -d -s "$session_name" -n "dashboard" bash -c "
+while true; do
+  clear
+  echo '─────────────────────────────────────────────────────────────'
+  echo '                    SSH CONNECTION MONITOR                  '
+  echo '─────────────────────────────────────────────────────────────'
+  echo \" Last update: \$(date '+%Y-%m-%d %H:%M:%S')                        \"
+  echo '─────────────────────────────────────────────────────────────'
+  for host in $hosts_list; do
+    if pgrep -f \"ssh \$host\" >/dev/null 2>&1 || pgrep -f \"ssh \${host}.lan\" >/dev/null 2>&1; then
+      tput setaf 2; printf ' %-55s \\n' \"[\$host] CONNECTED\"; tput sgr0
+    else
+      tput setaf 1; printf ' %-55s \\n' \"[\$host] DISCONNECTED\"; tput sgr0
+    fi
+  done
+  echo '─────────────────────────────────────────────────────────────'
+  sleep 10
+done"
+  
+  while IFS= read -r host; do
+    local window_name
+    window_name=$(echo "$host" | sed "s/^${pattern}-//")
+    
+    tmux new-window -t "$session_name" -n "$window_name" bash -c "ssh $host || ssh ${host}.lan"
+  done <<< "$matched_hosts"
+  
+  tmux select-window -t "$session_name:0"
+  tmux attach-session -t "$session_name"
+}

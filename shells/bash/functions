@@ -178,3 +178,80 @@ trace_bashrc_fast() {
   ) & 
   wait
 }
+
+list_ssh_hosts() {
+  declare -a ssh_hosts
+  local ssh_config="${1:-$HOME/.ssh/config}"
+  
+  function parse_ssh_config() {
+    local config_file="$1"
+    local config_dir
+    
+    if [[ "$config_file" == /* ]]; then
+      config_dir=$(dirname "$config_file")
+    else
+      config_dir=$(dirname "$(realpath "$config_file")")
+    fi
+    
+    while IFS= read -r line; do
+      # Ignore comments and empty lines
+      [[ "$line" =~ ^[[:space:]]*# ]] && continue
+      [[ -z "${line// }" ]] && continue
+      
+      if [[ "$line" =~ ^[[:space:]]*Include[[:space:]]+(.+)$ ]]; then
+        local include_pattern="${BASH_REMATCH[1]}"
+        include_pattern="${include_pattern/#\~/$HOME}"
+        
+        if [[ ! "$include_pattern" == /* ]]; then
+          include_pattern="$config_dir/$include_pattern"
+        fi
+        
+        for included_file in $include_pattern; do
+          if [[ -f "$included_file" ]]; then
+            parse_ssh_config "$included_file"
+          fi
+        done
+        continue
+      fi
+      
+      if [[ "$line" =~ ^[[:space:]]*Host[[:space:]]+(.+)$ ]]; then
+        local host_pattern="${BASH_REMATCH[1]}"
+        read -ra hosts_array <<< "$host_pattern"
+        for host in "${hosts_array[@]}"; do
+          ssh_hosts+=("$host")
+        done
+      fi
+      
+      if [[ "$line" =~ ^[[:space:]]*LocalForward[[:space:]]+.+[[:space:]]+([^:]+):[0-9]+$ ]]; then
+        local forward_host="${BASH_REMATCH[1]}"
+        ssh_hosts+=("$forward_host")
+      fi
+    done < "$config_file"
+  }
+  
+  ssh_hosts=()
+  
+  if [[ ! -f "$ssh_config" ]]; then
+    echo "SSH config file not found: $ssh_config" >&2
+    return 1
+  fi
+  
+  parse_ssh_config "$ssh_config"
+  
+  declare -A seen
+  local unique_hosts=()
+  for host in "${ssh_hosts[@]}"; do
+    if [[ -z "${seen[$host]}" ]]; then
+      seen["$host"]=1
+      unique_hosts+=("$host")
+    fi
+  done
+  
+  for host in "${unique_hosts[@]}"; do
+    [[ "$host" != "*" && ! "$host" =~ \* ]] && echo "$host"
+  done
+}
+
+if command -v tmux >/dev/null 2>&1 && [ -f ~/.dotfiles/shells/bash/tmux_functions ]; then
+    source ~/.dotfiles/shells/bash/tmux_functions
+fi

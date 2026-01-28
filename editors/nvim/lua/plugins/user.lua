@@ -142,11 +142,11 @@ return {
         maps.n["<leader>fb"] = { function() fzf.buffers() end, desc = "Find buffers (fzf-lua)" }
         maps.n["<leader>fo"] = { function() fzf.oldfiles() end, desc = "Find old files (fzf-lua)" }
         maps.n["<leader>fc"] = { function() fzf.grep_cword() end, desc = "Find word under cursor (fzf-lua)" }
-        maps.n["<leader>fl"] = { function() fzf.lines() end, desc = "Find lines (fzf-lua)" }
+        -- maps.n["<leader>fl"] = { function() fzf.lines() end, desc = "Find lines (fzf-lua)" }
       end
       
       -- Mapping to extract IPv4 addresses from current file
-      maps.n["<leader>ip"] = {
+      maps.n["<leader>ipy"] = {
         function()
           local content = vim.fn.getline(0, '$')
           local ips = {}
@@ -183,7 +183,7 @@ return {
       }
       
       -- Mapping to convert IPs from register to /32 CIDR
-      maps.n["<leader>i3"] = {
+      maps.n["<leader>ipp"] = {
         function()
           -- Read from register 'ip' (output from <leader>ip)
           local ip_text = vim.fn.getreg('ip')

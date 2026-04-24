@@ -34,5 +34,6 @@ LESS_TERMCAP_mr=$(tput rev)
 # Dim text (less visible)
 LESS_TERMCAP_mh=$(tput dim)
 
+GROFF_NO_SGR=1
 MANPAGER='less'
 set +a

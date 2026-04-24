@@ -255,3 +255,19 @@ list_ssh_hosts() {
 if command -v tmux >/dev/null 2>&1 && [ -f ~/.dotfiles/shells/bash/tmux_functions ]; then
     source ~/.dotfiles/shells/bash/tmux_functions
 fi
+
+git_diff_fingerprint() {
+  printf "%-50s | %s\n" "FILE" "DIFF_HASH"
+  printf "%-50s-+-%s\n" "$(printf '%.0s-' {1..50})" "$(printf '%.0s-' {1..32})"
+
+  git diff --name-only | while read -r f; do
+    hash=$(git diff "$f" \
+      | grep '^[+-]' \
+      | grep -v '^[+-][+-][+-]' \
+      | sort \
+      | md5sum \
+      | awk '{print $1}')
+
+    printf "%-50s | %s\n" "$f" "$hash"
+  done
+}

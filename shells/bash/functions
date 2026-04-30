@@ -271,3 +271,24 @@ git_diff_fingerprint() {
     printf "%-50s | %s\n" "$f" "$hash"
   done
 }
+
+
+ssh() {
+  local is_prod=false
+  [[ "$*" == *-prod* ]] && is_prod=true
+
+  if $is_prod; then
+    [ -n "$TMUX" ] && tmux select-pane -P 'bg=#8b0000' \
+                   || printf "\e]11;#8b0000\a"
+  fi
+
+  local rc=0
+  command ssh "$@" || rc=$?
+
+  if $is_prod; then
+    [ -n "$TMUX" ] && tmux select-pane -P 'bg=default' \
+                   || printf "\e]111;\a"
+  fi
+
+  return $rc
+}                                                                                     

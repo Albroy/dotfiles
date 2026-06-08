@@ -3,23 +3,37 @@ ssh_tmux() {
     echo "Error: tmux is required but not installed"
     return 1
   fi
-  
+
   if ! command -v ssh >/dev/null 2>&1; then
     echo "Error: ssh is required but not installed"
     return 1
   fi
 
+  local ssh_config="${HOME}/.ssh/config"
+  local session_name=""
+
+  local opt
+  while getopts ":c:s:" opt; do
+    case $opt in
+      c) ssh_config="$OPTARG" ;;
+      s) session_name="$OPTARG" ;;
+      :) echo "Option -$OPTARG requires an argument"; return 1 ;;
+      \?) echo "Unknown option: -$OPTARG"; return 1 ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+  OPTIND=1
+
   local pattern="$1"
-  local session_name="$2"
-  
+
   if [ -z "$pattern" ]; then
-    echo "Usage: ssh_tmux <pattern> [session_name]"
-    echo "Example: ssh_tmux 'gdest-prod' 'gdest-session'"
+    echo "Usage: ssh_tmux [-c config] [-s session] <pattern>"
+    echo "Example: ssh_tmux -c ~/.ssh/config -s mysession myhost-prod"
     return 1
   fi
-  
+
   local all_hosts
-  all_hosts=$(list_ssh_hosts)
+  all_hosts=$(list_ssh_hosts "$ssh_config")
   
   local matched_hosts=$(echo "$all_hosts" | grep -E -- "$pattern" | sort -u)
   

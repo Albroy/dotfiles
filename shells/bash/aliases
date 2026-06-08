@@ -66,6 +66,8 @@ alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias path='echo -e ${PATH//:/\\n}'
 
 
+#TODO : 
+#git log --graph --stat=10000 --full-history --all --source -p
 
 # # Nginx
 # alias nginxreload="sudo nginx -s reload"

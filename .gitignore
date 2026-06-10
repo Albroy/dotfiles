@@ -2,3 +2,4 @@ editors/vim/autoload/*
 editors/vim/plugged/*
 editors/nvim/lazy-lock.json
 editors/vim/.netrwhist
+hyprland/waybar/waybar-disabled

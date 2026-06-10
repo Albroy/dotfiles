@@ -1,0 +1,49 @@
+- link:
+    ~/.config/hypr:
+        path: hyprland/hypr
+        create: true
+        relink: true
+    ~/.config/waybar:
+        path: hyprland/waybar
+        create: true
+        relink: true
+    ~/.config/rofi:
+        path: hyprland/rofi
+        create: true
+        relink: true
+    ~/.config/swaync:
+        path: hyprland/swaync
+        create: true
+        relink: true
+    ~/.config/wlogout:
+        path: hyprland/wlogout
+        create: true
+        relink: true
+    ~/.config/waypaper:
+        path: hyprland/waypaper
+        create: true
+        relink: true
+    ~/.config/kitty:
+        path: hyprland/kitty
+        create: true
+        relink: true
+    ~/.config/fastfetch:
+        path: hyprland/fastfetch
+        create: true
+        relink: true
+    ~/.config/gtk-3.0:
+        path: hyprland/gtk-3.0
+        create: true
+        relink: true
+    ~/.config/gtk-4.0:
+        path: hyprland/gtk-4.0
+        create: true
+        relink: true
+    ~/.config/qt6ct:
+        path: hyprland/qt6ct
+        create: true
+        relink: true
+    ~/.config/xsettingsd:
+        path: hyprland/xsettingsd
+        create: true
+        relink: true

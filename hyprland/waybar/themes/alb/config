@@ -1,0 +1,35 @@
+{
+    // General Settings
+    "layer": "top",
+    "margin-bottom": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "spacing": 0,
+    // Load Modules
+    "include": [
+        "~/.config/waybar/modules.json"
+    ],
+    // Modules Left
+    "modules-left": [
+        "custom/appmenu",
+        "hyprland/window"
+    ],
+    // Modules Center
+    "modules-center": [
+        "hyprland/workspaces"
+    ],
+    // Modules Right
+    "modules-right": [
+        "group/tools",
+        "pulseaudio",
+        "backlight",
+        "network",
+        "bluetooth",
+        "battery",
+        "group/hardware",
+        "tray",
+        "custom/notification",
+        "clock",
+        "custom/exit"
+    ]
+}

@@ -31,6 +31,14 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+# ========== CLAUDE CODE ==========
+if command -v claude &>/dev/null ; then
+  alias claude='claude --mcp-config ~/.claude/mcp.json'
+  # kaizen: claude full-send — mcp + bypass permissions + effort max.
+  # `command` skips the claude alias above so --mcp-config isn't doubled.
+  alias kaizen='command claude --mcp-config ~/.claude/mcp.json --dangerously-skip-permissions --effort max'
+fi
+
 # ========== TMUXINATOR ==========
 if command -v tmuxinator  &>/dev/null ; then
   for repo in $(ls -1 $WORKSPACE); do

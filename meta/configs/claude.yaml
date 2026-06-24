@@ -1,0 +1,26 @@
+- link:
+    ~/.claude/settings.json: claude/settings.json
+    ~/.claude/CLAUDE.md: claude/CLAUDE.md
+    ~/.claude/RTK.md: claude/RTK.md
+    ~/.config/ccstatusline:
+        path: claude/ccstatusline
+        create: true
+        relink: true
+
+- shell:
+    -
+      description: Install rtk via cargo
+      command: |
+        if ! command -v cargo &>/dev/null; then
+          echo "cargo missing — skipping rtk (install rust: https://rustup.rs)"
+        elif ! command -v rtk &>/dev/null; then
+          cargo install --git https://github.com/rtk-ai/rtk
+        else
+          echo "rtk already installed: $(rtk --version)"
+        fi
+
+# ccstatusline runs via npx, which ships with npm, which ships with nodejs.
+- omnipkg:
+    - install:
+        - nodejs
+        - npm

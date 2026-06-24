@@ -8,13 +8,6 @@
         "color": "cyan"
       },
       {
-        "id": "3",
-        "type": "custom-command",
-        "commandPath": "awk -f ~/.config/ccstatusline/context-color.awk",
-        "preserveColors": true,
-        "timeout": 1000
-      },
-      {
         "id": "7b4a4d67-b51f-4799-a9ca-e88d47cc4648",
         "type": "output-style"
       },
@@ -36,11 +29,10 @@
       },
       {
         "id": "73bf90f3-7e91-4d3b-bfc2-d55d2a8a8dc5",
-        "type": "weekly-usage",
-        "rawValue": true,
-        "metadata": {
-          "display": "slider"
-        }
+        "type": "custom-command",
+        "commandPath": "awk -v key=weekly -v th='50,70,80,90' -f ~/.config/ccstatusline/usage-bar.awk",
+        "preserveColors": true,
+        "timeout": 1000
       }
     ],
     [
@@ -50,6 +42,20 @@
         "metadata": {
           "nerdFont": "true"
         }
+      },
+      {
+        "id": "3",
+        "type": "custom-command",
+        "commandPath": "awk -v key=context -v unit=tokens -v label='Ctx ' -f ~/.config/ccstatusline/metric-color.awk",
+        "preserveColors": true,
+        "timeout": 1000
+      },
+      {
+        "id": "ctx-pct-awk",
+        "type": "custom-command",
+        "commandPath": "awk -v key=context -v th='50,75,90,100' -f ~/.config/ccstatusline/usage-bar.awk",
+        "preserveColors": true,
+        "timeout": 1000
       },
       {
         "id": "7c449b86-da85-4ec0-ab30-2f19a52e7328",
@@ -65,11 +71,10 @@
       },
       {
         "id": "9eb4c67e-34ce-4a89-923c-1e4bdd696fcc",
-        "type": "session-usage",
-        "rawValue": true,
-        "metadata": {
-          "display": "slider"
-        }
+        "type": "custom-command",
+        "commandPath": "awk -v key=session -v th='50,70,80,90' -f ~/.config/ccstatusline/usage-bar.awk",
+        "preserveColors": true,
+        "timeout": 1000
       }
     ]
   ],
@@ -80,6 +85,7 @@
   "defaultPadding": "",
   "inheritSeparatorColors": false,
   "globalBold": false,
+  "gitCacheTtlSeconds": 5,
   "minimalistMode": true,
   "powerline": {
     "enabled": false,

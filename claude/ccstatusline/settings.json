@@ -53,7 +53,7 @@
       {
         "id": "ctx-pct-awk",
         "type": "custom-command",
-        "commandPath": "awk -v key=context -v th='50,75,90,100' -f ~/.config/ccstatusline/usage-bar.awk",
+        "commandPath": "awk -v key=context -v th='5,10,16,20' -f ~/.config/ccstatusline/usage-bar.awk",
         "preserveColors": true,
         "timeout": 1000
       },

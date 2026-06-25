@@ -22,6 +22,9 @@
   "enabledPlugins": {
     "caveman@caveman": true
   },
+  "env": {
+    "CAVEMAN_DEFAULT_MODE": "ultra"
+  },
   "extraKnownMarketplaces": {
     "caveman": {
       "source": {

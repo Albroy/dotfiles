@@ -2,15 +2,15 @@
 
 # used for running individual installation scripts located in ./meta/configs/ folder
 # usage:
-# ./install-standalone nvim
-# ./install-standalone tmux
-# ./install-standalone zsh
+# ./setup nvim
+# ./setup tmux
+# ./setup zsh
 #
 # or
-# ./install-standalone nvim tmux zsh
+# ./setup nvim tmux zsh
 #
 # NOTE: to run a config in sudo, then add '-sudo' as a suffix of the config to run.
-# Ex: ./install-standalone apt-sudo
+# Ex: ./setup apt-sudo
 # check: https://github.com/ecarlson94/dotbot-template#for-installing-single-configurations
 #
 # ./meta/configs/ folder will contain .yaml files that will be used as config. It
@@ -27,13 +27,19 @@ CONFIG_SUFFIX=".yaml"
 
 META_DIR="meta"
 CONFIG_DIR="configs"
-PROFILES_DIR="profiles"
 
 DOTBOT_DIR="dotbot"
 DOTBOT_BIN="bin/dotbot"
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OMNIPKG_PLUGIN="${BASE_DIR}/dotbot-plugins/omnipkg/omnipkg.py"
+
+if [ $# -eq 0 ]; then
+    echo "usage: ./setup <config>... (e.g. ./setup vim git tmux)"
+    echo "configs: $(cd "${BASE_DIR}/${META_DIR}/${CONFIG_DIR}" && ls ./*.yaml 2>/dev/null | sed 's#.*/##; s#\.yaml$##' | tr '\n' ' ')"
+    echo "         add -sudo suffix to run a config as root (e.g. apt-sudo)"
+    exit 1
+fi
 
 cd "${BASE_DIR}"
 git submodule update --init --recursive

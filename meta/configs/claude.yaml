@@ -2,6 +2,7 @@
     ~/.claude/settings.json: claude/settings.json
     ~/.claude/CLAUDE.md: claude/CLAUDE.md
     ~/.claude/RTK.md: claude/RTK.md
+    ~/.claude/mcp.json: claude/mcp.json
     ~/.claude/skills: claude/skills
     ~/.config/ccstatusline:
         path: claude/ccstatusline

@@ -1,0 +1,16 @@
+_dotbot_configs_complete() {
+    local cur configs_dir names opts n
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    configs_dir="${DOTFILES_BASH_DIR:-$HOME/.dotfiles/shells/bash}/../../meta/configs"
+    [ -d "$configs_dir" ] || return 0
+    names=$(cd "$configs_dir" && ls ./*.yaml 2>/dev/null | sed 's#.*/##; s#\.yaml$##')
+
+    case "${COMP_WORDS[0]}" in
+        *setup) opts=""; for n in $names; do opts+="$n $n-sudo "; done ;;
+        *)      opts="$names" ;;   # status (plain names)
+    esac
+
+    mapfile -t COMPREPLY < <(compgen -W "$opts" -- "$cur")
+}
+complete -F _dotbot_configs_complete setup ./setup status ./status

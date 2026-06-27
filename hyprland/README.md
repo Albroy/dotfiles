@@ -54,5 +54,5 @@ Each component is linked to its standard path
 ## Installation
 
 ```sh
-./install-standalone hyprland
+./setup hyprland
 ```

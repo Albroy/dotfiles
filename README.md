@@ -12,19 +12,13 @@ or if using **ssh**
 ~$ git clone --recursive git@github.com:Albroy/dotfiles.git .dotfiles
 ```
 
-For installing a predefined profile:
-
-```bash
-~/.dotfiles$ ./install-profile <profile> [<configs...>]
-```
-
 For installing single configurations:
 
 ```bash
-~/.dotfiles$ ./install-standalone <configs...>
+~/.dotfiles$ ./setup <configs...>
 ```
 
 If a configuration requires elevated privileges, add -sudo to its name:
 ```bash
-~/.dotfiles$ ./install-standalone vim-sudo 
+~/.dotfiles$ ./setup vim-sudo 
 ```

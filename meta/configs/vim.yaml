@@ -2,4 +2,5 @@
 - link:
     ~/.vimrc: editors/vim/vimrc
 - omnipkg:
-    - install: [vim]
+    - install:
+        - [vim-enhanced, vim]

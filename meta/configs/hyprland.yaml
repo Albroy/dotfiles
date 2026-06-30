@@ -47,3 +47,15 @@
         path: hyprland/xsettingsd
         create: true
         relink: true
+    ~/.config/fcitx5:
+        path: hyprland/fcitx5
+        create: true
+        relink: true
+
+- omnipkg:
+    - install:
+        - fcitx5
+        - fcitx5-hangul
+        - fcitx5-configtool
+        - fcitx5-gtk
+        - fcitx5-qt

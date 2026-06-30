@@ -1,0 +1,25 @@
+[Hotkey]
+# Toggle FR <-> Hangul
+TriggerKeys=Control+Super+space
+# Use trigger key to enumerate
+EnumerateWithTriggerKeys=True
+# Skip the first input method while enumerating
+EnumerateSkipFirst=False
+
+[Hotkey/EnumerateForwardKeys]
+0=Control+Super+space
+
+[Hotkey/EnumerateBackwardKeys]
+0=Control+Super+Shift+space
+
+[Hotkey/EnumerateGroupForwardKeys]
+
+[Hotkey/EnumerateGroupBackwardKeys]
+
+[Behavior]
+# Active by default
+ActiveByDefault=False
+# Share Input State: All
+ShareInputState=All
+# Show preedit in application
+PreeditEnabledByDefault=True

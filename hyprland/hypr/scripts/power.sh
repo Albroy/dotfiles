@@ -46,8 +46,11 @@ fi
 
 if [[ "$1" == "lock" ]]; then
 	echo ":: Lock"
-	sleep 0.5
-	hyprlock
+	# flock = atomic guard against spam launching multiple hyprlock instances
+	exec 9>/tmp/hyprlock.lock
+	if flock -n 9; then
+		pidof hyprlock || hyprlock
+	fi
 fi
 
 if [[ "$1" == "reboot" ]]; then

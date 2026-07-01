@@ -2,7 +2,7 @@
 # Group Name
 Name=Default
 # Layout
-Default Layout=fr
+Default Layout=us
 # Default Input Method
 DefaultIM=hangul
 
@@ -10,7 +10,7 @@ DefaultIM=hangul
 # Name
 Name=keyboard-fr
 # Layout
-Layout=
+Layout=fr
 
 [Groups/0/Items/1]
 # Name

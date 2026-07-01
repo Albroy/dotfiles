@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CAVEMAN_DEFAULT_MODE": "ultra"
+  },
   "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
@@ -20,10 +23,8 @@
     "refreshInterval": 10
   },
   "enabledPlugins": {
-    "caveman@caveman": true
-  },
-  "env": {
-    "CAVEMAN_DEFAULT_MODE": "ultra"
+    "caveman@caveman": true,
+    "gloss@gloss": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -31,6 +32,13 @@
         "source": "github",
         "repo": "JuliusBrussee/caveman"
       }
+    },
+    "gloss": {
+      "source": {
+        "source": "github",
+        "repo": "Albroy/gloss"
+      },
+      "autoUpdate": true
     }
   },
   "effortLevel": "high",

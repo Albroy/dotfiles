@@ -2,22 +2,21 @@
 # Group Name
 Name=Default
 # Layout
-Default Layout=us
+Default Layout=fr
 # Default Input Method
-DefaultIM=hangul
+DefaultIM=keyboard-fr
 
 [Groups/0/Items/0]
 # Name
 Name=keyboard-fr
 # Layout
-Layout=fr
+Layout=
 
 [Groups/0/Items/1]
 # Name
 Name=hangul
 # Layout
-Layout=
+Layout=us
 
 [GroupOrder]
 0=Default
-
